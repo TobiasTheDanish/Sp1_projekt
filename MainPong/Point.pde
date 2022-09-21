@@ -1,4 +1,4 @@
-class Point
+class Point //A simple class to easier represent two floats. Which can be usefull when dealing with positions
 {
   float x;
   float y;

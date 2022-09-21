@@ -77,6 +77,7 @@ class Player //<>//
     */
   }
 
+  //Returns the constrained value between min and max of the toConstrain parameter
   float constrainFloat(float toConstrain, float min, float max)
   {
     if (toConstrain > max)
@@ -103,6 +104,7 @@ class Player //<>//
   }
 
   //Used to constrain the players movement
+  //Returns true if the player hits the top border of the screen
   boolean hitTopBorder()
   {
     float rectCenterX = pos.x + dimensions.x / 2;
@@ -111,6 +113,7 @@ class Player //<>//
   }
 
   //Used to constrain the players movement
+  //Returns true if the player hits the bottom border of the screen
   boolean hitBottomBorder()
   {
     float rectCenterX = pos.x + dimensions.x / 2;
@@ -119,7 +122,7 @@ class Player //<>//
   }
 
   //Used to check if player hits top border or bottom border, and if the ball hits the player.
-  //Checks whether a given point is within a rect with the given values
+  //Checks whether a given point(px, py) is within a rect with the given values(rcx, rcy, w, h)
   boolean isInsideRect(float rcx, float rcy, float w, float h, float px, float py)
   {
     return isInRange(rcx, rcx+w, px) && isInRange(rcy, rcy+h, py);

@@ -5,10 +5,10 @@ Player p1;
 Player p2;
 Timer ballTimer;
 
-//Constant
-Point PLAYERSIZE = new Point(50, 200);
-float PLAYERSPEED = 10;
-float BALLSPEED = 8;
+//Constants (of finals?)
+final Point PLAYERSIZE = new Point(50, 200);
+final float PLAYERSPEED = 10;
+final float BALLSPEED = 8;
 
 //Processing functions
 void setup()
@@ -64,14 +64,6 @@ void display()
   displayScore();
 }
 
-void update()
-{
-  ballTimer.printTimer();
-  updateBalls();
-  updatePlayers();
-  updateScore();
-}
-
 void displayBalls()
 {
   for (int i = 0; i < currentNumBalls; i++)
@@ -90,6 +82,14 @@ void displayScore()
 {
   String scoreText = p1.score + " : " + p2.score;
   text(scoreText, width/2-75, 200);
+}
+
+void update()
+{
+  ballTimer.printTimer();
+  updateBalls();
+  updatePlayers();
+  updateScore();
 }
 
 void updateBalls()
