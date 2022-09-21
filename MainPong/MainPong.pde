@@ -8,19 +8,13 @@ Timer ballTimer;
 //Constant
 Point PLAYERSIZE = new Point(50, 200);
 float PLAYERSPEED = 10;
-float BALLSPEED = 10;
+float BALLSPEED = 8;
 
 //Processing functions
 void setup()
 {
   size (1500, 1000);
-
-  fill(0, 100, 0);
-  balls[0] = new Ball(new Point(width/2, height/2), 25, new Point(1, -1), BALLSPEED);
-  p1 = new Player(new Point(100, height/2 - PLAYERSIZE.y/2), PLAYERSIZE, PLAYERSPEED);
-  p2 = new Player(new Point(width - 100, height/2 - PLAYERSIZE.y/2), PLAYERSIZE, PLAYERSPEED);
-  ballTimer = new Timer(20);
-  ballTimer.begin();
+  init();
 }
 
 void draw()
@@ -30,20 +24,76 @@ void draw()
 }
 
 //Custom functions
+void init()
+{
+  fill(0, 100, 0); //Sets the fill color for all the objects, since this i never changed.
+  initFirstBall();
+  initPlayers();
+  initTimer();
+  initScoreText();
+}
+
+void initFirstBall()
+{
+  balls[0] = new Ball(new Point(width/2, height/2), 25, new Point(1, -1), BALLSPEED);
+}
+
+void initPlayers()
+{
+  p1 = new Player(new Point(100, height/2 - PLAYERSIZE.y/2), PLAYERSIZE, PLAYERSPEED);
+  p2 = new Player(new Point(width - 100, height/2 - PLAYERSIZE.y/2), PLAYERSIZE, PLAYERSPEED);
+}
+
+void initTimer()
+{
+  ballTimer = new Timer(20);
+  ballTimer.begin();
+}
+
+void initScoreText()
+{
+  textSize(100);
+  displayScore();
+}
+
 void display()
 {
   background(0);
-  for (int i = 0; i < currentNumBalls; i++)
-  {
-    balls[i].display();
-  }
-  p1.display();
-  p2.display();
+  displayBalls();
+  displayPlayers();
+  displayScore();
 }
 
 void update()
 {
   ballTimer.printTimer();
+  updateBalls();
+  updatePlayers();
+  updateScore();
+}
+
+void displayBalls()
+{
+  for (int i = 0; i < currentNumBalls; i++)
+  {
+    balls[i].display();
+  }
+}
+
+void displayPlayers()
+{
+  p1.display();
+  p2.display();
+}
+
+void displayScore()
+{
+  String scoreText = p1.score + " : " + p2.score;
+  text(scoreText, width/2-75, 200);
+}
+
+void updateBalls()
+{
   if (ballTimer.isFinished() && currentNumBalls < balls.length)
   {
     balls[currentNumBalls] = new Ball(new Point(width/2, height/2), 25, new Point(1, -1), BALLSPEED);
@@ -70,8 +120,27 @@ void update()
       ballTimer.begin();
     }
   }
+}
+
+void updatePlayers()
+{
   p1.move();
   p2.move();
+}
+
+void updateScore()
+{
+  for (int i = 0; i < currentNumBalls; i++)
+  {
+    if (balls[i].hitLeftBorder())
+    {
+      p2.score++; 
+    }
+    else if (balls[i].hitRightBorder())
+    {
+      p1.score++;
+    }
+  }
 }
 
 // Processing key events
