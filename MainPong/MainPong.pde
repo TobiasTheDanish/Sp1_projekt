@@ -4,6 +4,9 @@ int currentNumBalls = 1;
 Player p1;
 Player p2;
 Timer ballTimer;
+int tSize = 80;
+boolean textSizeIncreasing = true;
+GameStateManager stateManager = new GameStateManager();
 
 //Constants (of finals?)
 final Point PLAYERSIZE = new Point(50, 200);
@@ -30,7 +33,7 @@ void init()
   initFirstBall();
   initPlayers();
   initTimer();
-  initScoreText();
+  stateManager.setState(0);
 }
 
 void initFirstBall()
@@ -50,18 +53,12 @@ void initTimer()
   ballTimer.begin();
 }
 
-void initScoreText()
-{
-  textSize(100);
-  displayScore();
-}
-
 void display()
 {
   background(0);
   displayBalls();
   displayPlayers();
-  displayScore();
+  displayText();
 }
 
 void displayBalls()
@@ -78,18 +75,30 @@ void displayPlayers()
   p2.display();
 }
 
-void displayScore()
+void displayText()
 {
-  String scoreText = p1.score + " : " + p2.score;
-  text(scoreText, width/2-75, 200);
+  if (stateManager.getState() == 0)
+  {
+    textSize(tSize);
+    text("Press enter to start", width/2-325, 200);
+  }
+  else if (stateManager.getState() == 1)
+  {
+    textSize(tSize);
+    String scoreText = p1.score + " : " + p2.score;
+    text(scoreText, width/2-75, 200);
+  }
 }
 
 void update()
 {
-  ballTimer.printTimer();
-  updateBalls();
-  updatePlayers();
-  updateScore();
+  if (stateManager.getState() == 1)
+  {
+    //ballTimer.printTimer();
+    updateBalls();
+    updatePlayers();
+    updateText();
+  }
 }
 
 void updateBalls()
@@ -128,40 +137,103 @@ void updatePlayers()
   p2.move();
 }
 
-void updateScore()
+void updateText()
 {
-  for (int i = 0; i < currentNumBalls; i++)
+  if (stateManager.getState() == 0)
   {
-    if (balls[i].hitLeftBorder())
+     if (tSize == 90)
+     {
+       textSizeIncreasing = false;
+     }
+     else
+     {
+       textSizeIncreasing = true; 
+     }
+     
+     if (textSizeIncreasing)
+     {
+       tSize++; 
+     }
+     else
+     {
+       tSize--;
+     }
+     
+     println(tSize);
+  }
+  else if (stateManager.getState() == 1)
+  {
+    tSize = 100;
+    for (int i = 0; i < currentNumBalls; i++)
     {
-      p2.score++; 
-    }
-    else if (balls[i].hitRightBorder())
-    {
-      p1.score++;
+      if (balls[i].hitLeftBorder())
+      {
+        p2.score++;
+        if (p2.score >= 5)
+        {
+          stateManager.setState(2); 
+        }
+        else
+        {
+          stateManager.setState(0);
+          reset();
+        }
+      }
+      else if (balls[i].hitRightBorder())
+      {
+        p1.score++;
+        if (p1.score >= 5)
+        {
+          stateManager.setState(2); 
+        }
+        else
+        {
+          stateManager.setState(0);
+          reset();
+        }
+      }
     }
   }
+}
+
+void reset()
+{
+   currentNumBalls = 1;
+   initFirstBall();
+   p1.reset(new Point(100, height/2 - PLAYERSIZE.y/2));
+   p2.reset(new Point(width - 100, height/2 - PLAYERSIZE.y/2));
 }
 
 // Processing key events
 void keyPressed()
 {
-  if (key == 'w')
+  if (stateManager.getState() == 0)
   {
-    p1.velocity.y = -1;
-  } else if (key == 's')
-  {
-    p1.velocity.y = 1;
+    if (key == 'p')
+    {
+      stateManager.setState(1);
+    }
   }
-
-  if (key == CODED)
+  
+  if (stateManager.getState() == 1)
   {
-    if (keyCode == UP)
+    if (key == 'w')
     {
-      p2.velocity.y = -1;
-    } else if (keyCode == DOWN)
+      p1.velocity.y = -1;
+    } else if (key == 's')
     {
-      p2.velocity.y = 1;
+      p1.velocity.y = 1;
+    }
+  
+    if (key == CODED)
+    {
+      if (keyCode == UP)
+      {
+        p2.velocity.y = -1;
+      } else if (keyCode == DOWN)
+      {
+        p2.velocity.y = 1;
+      }
     }
   }
 }

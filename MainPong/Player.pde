@@ -33,6 +33,11 @@ class Player //<>//
     //pos.x += velocity.x * speed;
     pos.y += velocity.y * speed;
   }
+  
+  void reset(Point p)
+  {
+    pos = p; 
+  }
 
   //Implement VectorDirectionTest sketch for better collisions.
   void ballHit(Ball b)
