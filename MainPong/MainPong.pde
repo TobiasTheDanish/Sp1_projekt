@@ -4,14 +4,15 @@ int currentNumBalls = 1;
 Player p1;
 Player p2;
 Timer ballTimer;
-int tSize = 80;
-boolean textSizeIncreasing = true;
 GameStateManager stateManager = new GameStateManager();
+GameMenu startMenu;
+GameMenu gameOverMenu;
 
 //Constants (of finals?)
 final Point PLAYERSIZE = new Point(50, 200);
 final float PLAYERSPEED = 10;
 final float BALLSPEED = 8;
+final color STDCOLOR = color(0, 100, 0);
 
 //Processing functions
 void setup()
@@ -29,36 +30,77 @@ void draw()
 //Custom functions
 void init()
 {
-  fill(0, 100, 0); //Sets the fill color for all the objects, since this i never changed.
+  fill(STDCOLOR); //Sets the standard fill color for all the objects.
   initFirstBall();
   initPlayers();
   initTimer();
-  stateManager.setState(0);
+  initMenus();
+  stateManager.setState(0); //Set state to GameSetup state
 }
 
 void initFirstBall()
 {
-  balls[0] = new Ball(new Point(width/2, height/2), 25, new Point(1, -1), BALLSPEED);
+  //Initializes the first ball in the balls array, with a position, radius, velocity, and speed
+  balls[0] = new Ball(new Point(width/2, height/2), 25, new Point(1, -1), BALLSPEED, STDCOLOR);
 }
 
 void initPlayers()
 {
-  p1 = new Player(new Point(100, height/2 - PLAYERSIZE.y/2), PLAYERSIZE, PLAYERSPEED);
-  p2 = new Player(new Point(width - 100, height/2 - PLAYERSIZE.y/2), PLAYERSIZE, PLAYERSPEED);
+  //Initializes two new player objects, with a position, a size and a speed.
+  p1 = new Player(new Point(100, height/2 - PLAYERSIZE.y/2), PLAYERSIZE, PLAYERSPEED, STDCOLOR);
+  p2 = new Player(new Point(width - 100, height/2 - PLAYERSIZE.y/2), PLAYERSIZE, PLAYERSPEED, STDCOLOR);
 }
 
 void initTimer()
 {
-  ballTimer = new Timer(20);
-  ballTimer.begin();
+  ballTimer = new Timer(20); //Initializes a new Timer object, with a timer of 20 seconds
+}
+
+void initMenus()
+{
+   String[] startMenuText = {"Controls", "'W' and 'S' move player 1", "'UP' and 'DOWN' arrows move player 2"};
+   Point buttonSize = new Point(200,100);
+   String[] buttonText = new String[] {"Ready", "Exit"};
+   ClickHandler[] startMenuHandlers = new ClickHandler[] {
+                                           new ClickHandler(){
+                                             public void onClickEvent(){
+                                               startMenu.menuIsVisible = false; 
+                                             }
+                                           },
+                                           new ClickHandler(){
+                                             public void onClickEvent(){
+                                               exit();
+                                             }
+                                           } 
+                                      };
+   startMenu = new GameMenu(new Point(width/2, height/2), new Point(width/1.5, height/1.5), startMenuText, 60, true, buttonSize, buttonText, startMenuHandlers); 
+   
+   String[] gameOverText = {"GAME OVER!", "", "Do you wish to play again?"};
+   String[] gameOverButtonText = new String[] {"Play again", "Exit"};
+   ClickHandler[] gameOverHandlers = new ClickHandler[] {
+                                           new ClickHandler(){
+                                             public void onClickEvent(){
+                                               hardReset();
+                                               gameOverMenu.menuIsVisible = false; 
+                                             }
+                                           },
+                                           new ClickHandler(){
+                                             public void onClickEvent(){
+                                               exit();
+                                             }
+                                           } 
+                                      };
+   gameOverMenu = new GameMenu(new Point(width/2, height/2), new Point(width/1.5, height/1.5), gameOverText, 60, false, buttonSize, gameOverButtonText, gameOverHandlers); 
 }
 
 void display()
 {
   background(0);
+  fill(STDCOLOR); //Sets the standard fill color for all the objects.
   displayBalls();
   displayPlayers();
   displayText();
+  displayMenus();
 }
 
 void displayBalls()
@@ -79,22 +121,35 @@ void displayText()
 {
   if (stateManager.getState() == 0)
   {
-    textSize(tSize);
-    text("Press enter to start", width/2-325, 200);
+    textSize(80);
+    textAlign(CENTER);
+    text("Press 'P' to start", width/2, 400);
+    textSize(100);
+    textAlign(CENTER);
+    String scoreText = p1.score + " : " + p2.score;
+    text(scoreText, width/2, 200);
   }
   else if (stateManager.getState() == 1)
   {
-    textSize(tSize);
+    textSize(100);
+    textAlign(CENTER);
     String scoreText = p1.score + " : " + p2.score;
-    text(scoreText, width/2-75, 200);
+    text(scoreText, width/2, 200);
   }
+}
+
+void displayMenus()
+{
+  startMenu.display();
+  gameOverMenu.display();
 }
 
 void update()
 {
+  //ballTimer.printTimer();
+  updateMenus();
   if (stateManager.getState() == 1)
   {
-    //ballTimer.printTimer();
     updateBalls();
     updatePlayers();
     updateText();
@@ -105,7 +160,7 @@ void updateBalls()
 {
   if (ballTimer.isFinished() && currentNumBalls < balls.length)
   {
-    balls[currentNumBalls] = new Ball(new Point(width/2, height/2), 25, new Point(1, -1), BALLSPEED);
+    balls[currentNumBalls] = new Ball(new Point(width/2, height/2), 25, new Point(1, -1), BALLSPEED, STDCOLOR);
     currentNumBalls++;
     ballTimer.begin();
   }
@@ -139,31 +194,8 @@ void updatePlayers()
 
 void updateText()
 {
-  if (stateManager.getState() == 0)
+  if (stateManager.getState() == 1)
   {
-     if (tSize == 90)
-     {
-       textSizeIncreasing = false;
-     }
-     else
-     {
-       textSizeIncreasing = true; 
-     }
-     
-     if (textSizeIncreasing)
-     {
-       tSize++; 
-     }
-     else
-     {
-       tSize--;
-     }
-     
-     println(tSize);
-  }
-  else if (stateManager.getState() == 1)
-  {
-    tSize = 100;
     for (int i = 0; i < currentNumBalls; i++)
     {
       if (balls[i].hitLeftBorder())
@@ -171,12 +203,14 @@ void updateText()
         p2.score++;
         if (p2.score >= 5)
         {
+          gameOverMenu.menuText[1] = "Player 2 won!";
+          gameOverMenu.menuIsVisible = true;
           stateManager.setState(2); 
         }
         else
         {
           stateManager.setState(0);
-          reset();
+          softReset();
         }
       }
       else if (balls[i].hitRightBorder())
@@ -184,24 +218,54 @@ void updateText()
         p1.score++;
         if (p1.score >= 5)
         {
+          gameOverMenu.menuText[1] = "Player 1 won!";
+          gameOverMenu.menuIsVisible = true;
           stateManager.setState(2); 
         }
         else
         {
           stateManager.setState(0);
-          reset();
+          softReset();
         }
       }
     }
   }
 }
 
-void reset()
+void updateMenus()
 {
-   currentNumBalls = 1;
-   initFirstBall();
-   p1.reset(new Point(100, height/2 - PLAYERSIZE.y/2));
-   p2.reset(new Point(width - 100, height/2 - PLAYERSIZE.y/2));
+  if (stateManager.getState() == 0 && startMenu.menuIsVisible)
+  {
+    startMenu.update(new Point(mouseX, mouseY));
+  }
+  
+  if (stateManager.getState() == 2 && gameOverMenu.menuIsVisible)
+  {
+    gameOverMenu.update(new Point(mouseX, mouseY));
+  }
+}
+
+//Used to reset after a round has ended with one of the players gaining a point.
+void softReset()
+{
+  //Resets number of active balls to 1, and initializes the first one.
+  currentNumBalls = 1;
+  initFirstBall();
+  
+  //Resets the players position, to the starting position.
+  p1.resetPos();   
+  p2.resetPos();
+}
+
+//Used to reset the game when it has ended
+void hardReset()
+{
+  //Reset all of the objects, by assigning them to new objects
+  currentNumBalls = 1;
+  initFirstBall();
+  initPlayers();
+  initTimer();
+  stateManager.setState(0); //Reset state to GameSetup state
 }
 
 // Processing key events
@@ -209,9 +273,10 @@ void keyPressed()
 {
   if (stateManager.getState() == 0)
   {
-    if (key == 'p')
+    if (key == 'p' || key == 'P')
     {
       stateManager.setState(1);
+      ballTimer.begin(); //Starts the 20 second timer 
     }
   }
   
