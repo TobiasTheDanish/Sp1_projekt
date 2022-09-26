@@ -4,20 +4,24 @@ class Ball
   float radius;
   Point velocity;
   float speed;
+  color c;
   boolean hitLeftOrRightWall;
 
-  Ball(Point _pos, float _radius, Point _velocity, float _speed)
+  Ball(Point _pos, float _radius, Point _velocity, float _speed, color _c)
   {
     pos = _pos;
     radius = _radius;
     velocity = _velocity;
     speed = _speed;
+    c = _c;
     hitLeftOrRightWall = false;
   }
 
   //Function to display ball on screen
   void display()
   {
+    fill(c);
+    noStroke();
     ellipse(pos.x, pos.y, radius * 2, radius * 2);
   }
 
