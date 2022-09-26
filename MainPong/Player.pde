@@ -1,5 +1,6 @@
 class Player //<>//
 {
+  //Player attributes
   Point pos;
   final Point startPos;
   Point velocity;
@@ -10,6 +11,7 @@ class Player //<>//
 
   Player(Point p, Point d, float s, color _c)
   {
+    //Set player attributes
     startPos = p;
     pos = new Point(startPos.x, startPos.y);
     velocity = new Point(0.0f, 0.0f);
@@ -22,6 +24,7 @@ class Player //<>//
   void display()
   {
     //Draw the player rect
+    rectMode(CORNER);
     fill(c);
     noStroke();
     rect(pos.x, pos.y, dimensions.x, dimensions.y);
@@ -42,7 +45,7 @@ class Player //<>//
   
   void resetPos()
   {
-    pos = startPos; 
+    pos = new Point(startPos.x, startPos.y); //Creates a new objects to make sure that startPos remains the same.
   }
 
   void ballHit(Ball b)
@@ -67,13 +70,22 @@ class Player //<>//
     {
       if (isInRange(rectCenterX - 0.1f, rectCenterX + 0.1f, b.pos.x))
       {
-        b.velocity.y *= -1;
+        Point unitDirectionToCenter = calcUnitVector(calcVector(pos.x + dimensions.x/2, pos.y + dimensions.y/2, b.pos.x, b.pos.y));
+        b.velocity.y *= constrainFloat((abs(unitDirectionToCenter.y) * -1), -1, -0.75);
       }
       else if (isInRange(rectCenterY - 0.1f, rectCenterY + 0.1f, b.pos.y))
       {
-        b.velocity.x *= -1;
+        Point unitDirectionToCenter = calcUnitVector(calcVector(pos.x + dimensions.x/2, pos.y + dimensions.y/2, b.pos.x, b.pos.y));
+        b.velocity.x *= constrainFloat((abs(unitDirectionToCenter.x) * -1), -1, -0.75);
+      }
+      else if (isInRange(rectCenterX - 0.1f, rectCenterX + 0.1f, b.pos.x) && isInRange(rectCenterY - 0.1f, rectCenterY + 0.1f, b.pos.y))
+      {
+        Point unitDirectionToCenter = calcUnitVector(calcVector(pos.x + dimensions.x/2, pos.y + dimensions.y/2, b.pos.x, b.pos.y));
+        b.velocity.x *= constrainFloat((abs(unitDirectionToCenter.x) * -1), -1, -0.75);
+        b.velocity.y *= constrainFloat((abs(unitDirectionToCenter.y) * -1), -1, -0.75);
       }
       
+      //Moves the ball out of the player after collision
       b.pos.x -= collisionPoint.x - rectCenterX;
       b.pos.y -= collisionPoint.y - rectCenterY;
     }

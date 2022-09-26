@@ -17,7 +17,7 @@ class Ball
     hitLeftOrRightWall = false;
   }
 
-  //Function to display ball on screen
+  //Function to display ball on screen. Using the standard ellipseMode of CENTER
   void display()
   {
     fill(c);
@@ -28,10 +28,13 @@ class Ball
   void move()
   { 
     borderChecks();
+    
+    //Calculate the velocity as a unit vector(A magnitude of 1), to make sure it always moves at the same speed.
+    Point unitVelocity = calcUnitVector(velocity);
 
     //Change the ball's x and y pos to make it move around the screen.
-    pos.x += velocity.x * speed;
-    pos.y += velocity.y * speed;
+    pos.x += unitVelocity.x * speed;
+    pos.y += unitVelocity.y * speed;
   }
   
   void borderChecks()
@@ -43,8 +46,10 @@ class Ball
       //Reset the ball's position if it has hit one of the side walls.
       pos.x= width/2;
       pos.y = height/2;
+      
       //Swap the velocity to have the ball move the opposite way.
       velocity.x *= -1;
+      
       //If the ball have hit a wall, we reset the number of active balls in MainPong,
       //for this we use the following boolean.
       hitLeftOrRightWall = true;
@@ -54,7 +59,33 @@ class Ball
     {
       //Flip y velocity to keep the ball within the screen.
       velocity.y *= -1;
+      
+      //Move the ball away from the border it hit, so i doesnt get stuck.
+      if (hitTopBorder())
+      {
+        pos.y += abs(pos.y-radius);
+      }
+      else
+      {
+        pos.y -= abs(pos.y + radius - height); 
+      }
+      
+      //Check if the ball is moving slower on the x axis than wanted and then increment (or decrement) it.
+      if (velocity.x < 0 && velocity.x > -0.60)
+      {
+        velocity.x -= 0.1; 
+      }
+      else if (velocity.x > 0 && velocity.x < 0.60)
+      {
+        velocity.x += 0.1;
+      }
     }
+  }
+  
+  Point calcUnitVector(Point vec)
+  {
+    float Mag = sqrt((vec.x*vec.x) + (vec.y*vec.y));
+    return new Point(vec.x/Mag, vec.y/Mag);
   }
   
   //Returns the constrained value between min and max of the toConstrain parameter

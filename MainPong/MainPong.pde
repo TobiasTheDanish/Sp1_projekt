@@ -41,7 +41,7 @@ void init()
 void initFirstBall()
 {
   //Initializes the first ball in the balls array, with a position, radius, velocity, and speed
-  balls[0] = new Ball(new Point(width/2, height/2), 25, new Point(1, -1), BALLSPEED, STDCOLOR);
+  balls[0] = new Ball(new Point(width/2, height/2), 25, new Point(random(-1, 1.01), random(0.75, 1.01)), BALLSPEED, STDCOLOR);
 }
 
 void initPlayers()
@@ -160,7 +160,7 @@ void updateBalls()
 {
   if (ballTimer.isFinished() && currentNumBalls < balls.length)
   {
-    balls[currentNumBalls] = new Ball(new Point(width/2, height/2), 25, new Point(1, -1), BALLSPEED, STDCOLOR);
+    balls[currentNumBalls] = new Ball(new Point(width/2, height/2), 25, new Point(random(-1, 1.01), random(0.75, 1.01)), BALLSPEED, STDCOLOR);
     currentNumBalls++;
     ballTimer.begin();
   }
