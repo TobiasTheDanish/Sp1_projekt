@@ -1,23 +1,29 @@
 class Player //<>//
 {
   Point pos;
+  final Point startPos;
   Point velocity;
   Point dimensions;
   float speed;
+  color c;
   int score;
 
-  Player(Point p, Point d, float s)
+  Player(Point p, Point d, float s, color _c)
   {
-    pos = p;
+    startPos = p;
+    pos = new Point(startPos.x, startPos.y);
     velocity = new Point(0.0f, 0.0f);
     dimensions = d;
     speed = s;
+    c = _c;
     score = 0;
   }
 
   void display()
   {
     //Draw the player rect
+    fill(c);
+    noStroke();
     rect(pos.x, pos.y, dimensions.x, dimensions.y);
   }
 
@@ -30,16 +36,15 @@ class Player //<>//
     }
 
     //move the player along the x and y axis
-    //pos.x += velocity.x * speed;
+    pos.x += velocity.x * speed;
     pos.y += velocity.y * speed;
   }
   
-  void reset(Point p)
+  void resetPos()
   {
-    pos = p; 
+    pos = startPos; 
   }
 
-  //Implement VectorDirectionTest sketch for better collisions.
   void ballHit(Ball b)
   {
     //By using a moving center i try minimize the amount of missed collisions.
@@ -73,8 +78,8 @@ class Player //<>//
       b.pos.y -= collisionPoint.y - rectCenterY;
     }
       
-    //The following lines is for debugging purposes only
-    /*
+    
+    /* The following lines is for debugging purposes only
        rectMode(CENTER);
        rect(rectCenterX, rectCenterY, 20, 20);
        rectMode(CORNER);
