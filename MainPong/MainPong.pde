@@ -8,16 +8,17 @@ GameStateManager stateManager = new GameStateManager();
 GameMenu startMenu;
 GameMenu gameOverMenu;
 
-//Constants (of finals?)
+//Constants (or finals?)
 final Point PLAYERSIZE = new Point(50, 200);
 final float PLAYERSPEED = 10;
-final float BALLSPEED = 8;
+final float BALLSPEED = 12;
 final color STDCOLOR = color(0, 100, 0);
 
 //Processing functions
 void setup()
 {
-  size (1500, 1000);
+  size (2000, 1250);
+  //fullScreen();
   init();
 }
 
@@ -61,35 +62,23 @@ void initMenus()
    String[] startMenuText = {"Controls", "'W' and 'S' move player 1", "'UP' and 'DOWN' arrows move player 2"};
    Point buttonSize = new Point(200,100);
    String[] buttonText = new String[] {"Ready", "Exit"};
-   ClickHandler[] startMenuHandlers = new ClickHandler[] {
-                                           new ClickHandler(){
-                                             public void onClickEvent(){
+   ClickHandler[] startMenuHandlers = new ClickHandler[] {() -> {
                                                startMenu.menuIsVisible = false; 
-                                             }
-                                           },
-                                           new ClickHandler(){
-                                             public void onClickEvent(){
+                                             }, () -> {
                                                exit();
                                              }
-                                           } 
-                                      };
+                                           };
    startMenu = new GameMenu(new Point(width/2, height/2), new Point(width/1.5, height/1.5), startMenuText, 60, true, buttonSize, buttonText, startMenuHandlers); 
    
    String[] gameOverText = {"GAME OVER!", "", "Do you wish to play again?"};
    String[] gameOverButtonText = new String[] {"Play again", "Exit"};
-   ClickHandler[] gameOverHandlers = new ClickHandler[] {
-                                           new ClickHandler(){
-                                             public void onClickEvent(){
+   ClickHandler[] gameOverHandlers = new ClickHandler[] { () -> {
                                                hardReset();
                                                gameOverMenu.menuIsVisible = false; 
-                                             }
-                                           },
-                                           new ClickHandler(){
-                                             public void onClickEvent(){
+                                             }, () -> {
                                                exit();
                                              }
-                                           } 
-                                      };
+                                           };
    gameOverMenu = new GameMenu(new Point(width/2, height/2), new Point(width/1.5, height/1.5), gameOverText, 60, false, buttonSize, gameOverButtonText, gameOverHandlers); 
 }
 
@@ -135,6 +124,7 @@ void displayText()
     textAlign(CENTER);
     String scoreText = p1.score + " : " + p2.score;
     text(scoreText, width/2, 200);
+    ballTimer.display("New ball in:");
   }
 }
 

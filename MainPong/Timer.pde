@@ -21,6 +21,24 @@ class Timer
     timeInMillis = timeInSeconds * 1000;
   }
   
+  void display(String text)
+  {
+    float timeLeft = startTime - (millis()-timeInMillis);
+    if (timeLeft < 3000.0f)
+    {
+       //Display message text, that gets passed in as parameter
+       textSize(60);
+       fill(0,100,0);
+       textAlign(CENTER,CENTER);
+       text(text, width/2, height/2 - height/8);
+       
+       //Display timer text
+       textSize(100);
+       String timeLeftStr = Integer.toString((int)(timeLeft/1000)+1);
+       text(timeLeftStr, width/2, height/2 - height/16);
+    }
+  }
+  
   //Used for debugging, prints the time left on the timer to the console.
   void printTimer()
   {
