@@ -82,6 +82,7 @@ class Ball
     }
   }
   
+  //returns a vector with a magnitude of 1
   Point calcUnitVector(Point vec)
   {
     float Mag = sqrt((vec.x*vec.x) + (vec.y*vec.y));

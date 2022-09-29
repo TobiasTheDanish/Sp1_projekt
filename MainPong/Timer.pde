@@ -24,6 +24,8 @@ class Timer
   void display(String text)
   {
     float timeLeft = startTime - (millis()-timeInMillis);
+    
+    //only display the timer if there is less than 3 seconds left
     if (timeLeft < 3000.0f)
     {
        //Display message text, that gets passed in as parameter

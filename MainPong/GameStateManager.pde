@@ -9,11 +9,11 @@ class GameStateManager
   
   public int getState()
   {
-    return _state;
+    return _state; //returns current state
   }
   
   public void setState(int state)
   {
-    _state = state;
+    _state = state; //set current state
   }
 }

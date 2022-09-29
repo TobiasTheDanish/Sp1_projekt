@@ -68,18 +68,21 @@ class Player //<>//
     
     if (isInsideRect(pos.x, pos.y, dimensions.x, dimensions.y, collisionPoint.x, collisionPoint.y))
     {
-      if (isInRange(rectCenterX - 0.1f, rectCenterX + 0.1f, b.pos.x))
+      if (isInRange(rectCenterX - 0.1f, rectCenterX + 0.1f, b.pos.x)) //checks if the ball hits the player on the left or right side
       {
+        //Creates variation in the way the ball bounces of the player, depending on how far the ball is from the middle of the player
         Point unitDirectionToCenter = calcUnitVector(calcVector(pos.x + dimensions.x/2, pos.y + dimensions.y/2, b.pos.x, b.pos.y));
         b.velocity.y *= constrainFloat((abs(unitDirectionToCenter.y) * -1), -1, -0.75);
       }
-      else if (isInRange(rectCenterY - 0.1f, rectCenterY + 0.1f, b.pos.y))
+      else if (isInRange(rectCenterY - 0.1f, rectCenterY + 0.1f, b.pos.y)) //checks if the ball hits the player on the top or bottom
       {
+        //Creates variation in the way the ball bounces of the player, depending on how far the ball is from the middle of the player
         Point unitDirectionToCenter = calcUnitVector(calcVector(pos.x + dimensions.x/2, pos.y + dimensions.y/2, b.pos.x, b.pos.y));
         b.velocity.x *= constrainFloat((abs(unitDirectionToCenter.x) * -1), -1, -0.75);
       }
-      else if (isInRange(rectCenterX - 0.1f, rectCenterX + 0.1f, b.pos.x) && isInRange(rectCenterY - 0.1f, rectCenterY + 0.1f, b.pos.y))
+      else if (isInRange(rectCenterX - 0.1f, rectCenterX + 0.1f, b.pos.x) && isInRange(rectCenterY - 0.1f, rectCenterY + 0.1f, b.pos.y)) //checks if the ball hits the player on one of the corners
       {
+        //Creates variation in the way the ball bounces of the player, depending on how far the ball is from the middle of the player
         Point unitDirectionToCenter = calcUnitVector(calcVector(pos.x + dimensions.x/2, pos.y + dimensions.y/2, b.pos.x, b.pos.y));
         b.velocity.x *= constrainFloat((abs(unitDirectionToCenter.x) * -1), -1, -0.75);
         b.velocity.y *= constrainFloat((abs(unitDirectionToCenter.y) * -1), -1, -0.75);
@@ -114,11 +117,13 @@ class Player //<>//
     return toConstrain;
   }
   
+  //return a vector based on 2 points
   Point calcVector(float xa, float ya, float xb, float yb)
   {
       return new Point(xa-xb, ya-yb);
   }
   
+  //returns a vector with a magnitude of 1
   Point calcUnitVector(Point vec)
   {
     float Mag = sqrt((vec.x*vec.x) + (vec.y*vec.y));
