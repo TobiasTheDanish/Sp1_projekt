@@ -1,2 +1,4 @@
 # Sp1_projekt
- I made pong
+ The classic game of pong made in Processing.
+ 
+ There is working menus, a scoreboard, a timer, including more.
